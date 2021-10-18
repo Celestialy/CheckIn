@@ -1,0 +1,86 @@
+﻿@page "/roomoverview/moveusertoroom/{roomid:int}"
+@using Microsoft.AspNetCore.Authorization
+@using CheckIn.Shared.Models
+@attribute [Authorize(Roles = "Instructor,Administrator")]
+
+@if (room == null || Students == null)
+{
+    <div class="mat-blazor-demo-theme-app-row">
+        <MatProgressBar Indeterminate="true" ></MatProgressBar>
+    </div>
+}
+else
+{
+    <center>
+        <div class="col-12">
+            <center>
+                <h2>@room.RoomName</h2>
+            </center>
+        </div>
+
+        <br />
+
+        <div style="display:inline-block; margin-right:20px; width: 50%;">
+            <MatCard class="demo-mat-card" Style="width: 100%; padding: 2px;">
+                <div class="demo-mat-card-content">
+                    <MatHeadline6 class="demo-mat-card-clean-margin">
+                        Tilføj elev
+                    </MatHeadline6>
+                    <MatDivider></MatDivider>
+                </div>
+                <MatTextField TValue="string" OnInput="OnInput" Label="Søg..." @onkeydown="Search"></MatTextField>
+                <MatTable Style="display:table;" Items="Students" ShowPaging="false" SelectionChanged="SelectionChangedEvent" AllowSelection="true">
+                    <MatTableHeader>
+                        <th style="width:50%">Fornavn</th>
+                        <th style="width:28%">Efternavn</th>
+                        <th style="width:22%">Kort</th>
+                    </MatTableHeader>
+                    <MatTableRow>
+                        @{ var yourStyle = "";
+                                if (context.CardId == null || context.CardId == "")
+                                {
+                                    yourStyle = "background-color: red";
+                                }
+                                else if (room.Students.Any(x => x.Id == context.Id))
+                                {
+                                    yourStyle = "background-color: green";
+                                } }
+                        <td style="@yourStyle">@context.FirstName</td>
+                        <td style="@yourStyle">@context.LastName</td>
+                        <td style="@yourStyle">@context.CardId</td>
+                    </MatTableRow>
+                </MatTable>
+                @errormsg
+                <CheckinPagination Disabled="isLoading" Length="pagination.totalCount" PageSize="pagination.pageSize" Page="OnPage"></CheckinPagination>
+                <MatCardActions>
+                    <MatCardActionIcons>
+                        <MatButton Raised="true" Disabled="!canMoveUserToRoom" OnClick="moveUserToRoom">Tilføj Elev</MatButton>
+                    </MatCardActionIcons>
+                </MatCardActions>
+            </MatCard>
+        </div>
+
+        <div style="display:inline-block; margin-left:20px;">
+            <MatCard class="demo-mat-card">
+                <div class="demo-mat-card-content">
+                    <MatHeadline6 class="demo-mat-card-clean-margin">
+                        Fjern Elev
+                    </MatHeadline6>
+                    <MatDivider></MatDivider>
+                </div>
+                <MatCardContent>
+                    <MatSelectItem @bind-Value="@SelectedUserRemove" Items="@room.Students" TValue="User" Label="Vælg Bruger*">
+                        <ItemTemplate>
+                            @context.Name
+                        </ItemTemplate>
+                    </MatSelectItem>
+                </MatCardContent>
+                <MatCardActions>
+                    <MatCardActionIcons>
+                        <MatButton Raised="true" Disabled="(SelectedUserRemove == null)" OnClick="RemoveUserFromRoom">Fjern Elev</MatButton>
+                    </MatCardActionIcons>
+                </MatCardActions>
+            </MatCard>
+        </div>
+    </center>
+}

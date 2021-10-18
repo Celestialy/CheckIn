@@ -1,0 +1,29 @@
+﻿@inherits LayoutComponentBase
+<AuthorizeView>
+
+    <div class="sidebar">
+        <NavMenu />
+    </div>
+</AuthorizeView>
+
+    <div class="main">
+        <div class="top-row px-4" style="z-index:100;">
+            <a href="">
+                <img style="height:75%; margin-top:8px; margin-left:-30px" src="/Images/Banner.jpg" />
+            </a>
+        </div>
+
+        <MatThemeProvider Theme="@theme1">
+            <div class="content px-4">
+                @Body
+            </div>
+        </MatThemeProvider>
+    </div>
+
+@code{
+    MatTheme theme1 = new MatTheme()
+    {
+        Primary = "#448AFF",
+        Secondary = "#448AFF"
+    };
+}

@@ -1,0 +1,55 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <UserSecretsId>6f09ec2f-6f38-4f93-bffc-3584a5fda5e3</UserSecretsId>
+    <ApplicationInsightsResourceId>/subscriptions/ff65fed7-05f2-43d9-8736-8bbcfa5fb342/resourceGroups/Checkin/providers/microsoft.insights/components/TechCollegeAPIInsight</ApplicationInsightsResourceId>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <NoWarn>1701;1702;1591</NoWarn>
+    <DocumentationFile></DocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Migrations\20200911063919_added_instructors.cs" />
+    <Compile Remove="Migrations\20200911063919_added_instructors.Designer.cs" />
+    <Compile Remove="Migrations\20200911064224_added_instructors.cs" />
+    <Compile Remove="Migrations\20200911064224_added_instructors.Designer.cs" />
+    <Compile Remove="Migrations\20200911064347_added_instructors.cs" />
+    <Compile Remove="Migrations\20200911064347_added_instructors.Designer.cs" />
+    <Compile Remove="Migrations\20200911064513_added_instructors.cs" />
+    <Compile Remove="Migrations\20200911064513_added_instructors.Designer.cs" />
+    <Compile Remove="Migrations\20200911070203_added_instructors.cs" />
+    <Compile Remove="Migrations\20200911070203_added_instructors.Designer.cs" />
+    <Compile Remove="Migrations\20200911070653_added_instructors.cs" />
+    <Compile Remove="Migrations\20200911070653_added_instructors.Designer.cs" />
+    <Compile Remove="Migrations\20200911073236_added_instructors.cs" />
+    <Compile Remove="Migrations\20200911073236_added_instructors.Designer.cs" />
+    <Compile Remove="Migrations\20200911074422_added_instructors.cs" />
+    <Compile Remove="Migrations\20200911074422_added_instructors.Designer.cs" />
+    <Compile Remove="Migrations\20200911074932_added_instructors.cs" />
+    <Compile Remove="Migrations\20200911074932_added_instructors.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MatBlazor" Version="2.8.0" />
+    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.16.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.2" />
+    <PackageReference Include="Microsoft.Azure.SignalR" Version="1.4.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="5.0.3" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.3" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="5.0.3">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="5.0.2" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CheckIn.Shared\CheckIn.Shared.csproj" />
+  </ItemGroup>
+
+
+</Project>

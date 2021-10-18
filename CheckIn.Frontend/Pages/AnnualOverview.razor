@@ -1,0 +1,201 @@
+﻿@page "/annualOverview/{Card?}"
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@attribute [Authorize]
+
+<div class="mat-blazor-demo-theme-app-row">
+    <MatProgressBar Indeterminate="true" Closed="@progressBarDisabled" Style="margin-bottom:20px"></MatProgressBar>
+</div>
+@if (IsOtherUser)
+{
+    <MatH3>Bruger: @User.Name</MatH3>
+}
+
+<div class="row" style="text-align:center">
+    <div class="col-4">
+        <MatButton Raised="true" OnClick="@(e => GetChecktimes(studentCard, selectedYear - 1))">Tilbage</MatButton>
+    </div>
+    <div class="col-4">
+        <h3>@selectedYear</h3>
+    </div>
+    <div class="col-4">
+        <MatButton Raised="true" OnClick="@(e => GetChecktimes(studentCard, selectedYear + 1))" Disabled="atCurrentYear">Frem</MatButton>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col">
+        <MatTable Items="@OutPutList" class="mat-elevation-z5 check-in-overview annual" ShowPaging="false">
+            <MatTableHeader>
+                <th>Uge</th>
+                <th>Mandag</th>
+                <th>Tirsdag</th>
+                <th>Onsdag</th>
+                <th>Torsdag</th>
+                <th>Fredag</th>
+            </MatTableHeader>
+            <MatTableRow>
+                <td style="width: auto">@context.Week</td>
+                <td class="center-text">
+                    <div class="row">
+                        <div class="col-12">
+                            <label class="check-in">Ind: @context.MondayIn</label><br />
+                        </div>
+                        <div class="col-4"></div>
+                        <div class="col-4"><label class="check-out">Ud: @context.MondayOut</label></div>
+                        <div class="col-4" hidden="@(CanManageTimes == false)">
+                            <MatButton OnClick="@(e => ShowEditTime(context.Week, context.MondayDate, context.MondayInID, context.MondatOutID))" class="material-icons">read_more</MatButton>
+                        </div>
+                    </div>
+                </td>
+                <td class="center-text">
+                    <div class="row">
+                        <div class="col-12">
+                            <label class="check-in">Ind: @context.TuesdayIn</label><br />
+                        </div>
+                        <div class="col-4"></div>
+                        <div class="col-4"><label class="check-out">Ud: @context.TuesdayOut</label></div>
+                        <div class="col-4" hidden="@(CanManageTimes == false)">
+                            <MatButton OnClick="@(e => ShowEditTime(context.Week, context.TuesdayDate, context.TuesdayInID, context.TuesdayOutID))" class="material-icons">read_more</MatButton>
+                        </div>
+                    </div>
+                </td>
+                <td class="center-text">
+                    <div class="row">
+                        <div class="col-12">
+                            <label class="check-in">Ind: @context.WednesdayIn</label><br />
+                        </div>
+                        <div class="col-4"></div>
+                        <div class="col-4"><label class="check-out">Ud: @context.WednesdayOut</label></div>
+                        <div class="col-4" hidden="@(CanManageTimes == false)">
+                            <MatButton OnClick="@(e => ShowEditTime(context.Week, context.WednesdayDate, context.WednesdayInID, context.WednesdayOutID))" class="material-icons">read_more</MatButton>
+                        </div>
+                    </div>
+                </td>
+                <td class="center-text">
+                    <div class="row">
+                        <div class="col-12">
+                            <label class="check-in">Ind: @context.ThursdayIn</label><br />
+                        </div>
+                        <div class="col-4"></div>
+                        <div class="col-4"><label class="check-out">Ud: @context.ThursdayOut</label></div>
+                        <div class="col-4" hidden="@(CanManageTimes == false)">
+                            <MatButton OnClick="@(e => ShowEditTime(context.Week, context.ThursdayDate, context.ThursdayInID, context.ThursdayOutID))" class="material-icons">read_more</MatButton>
+                        </div>
+                    </div>
+                </td>
+                <td class="center-text">
+                    <div class="row">
+                        <div class="col-12">
+                            <label class="check-in">Ind: @context.FridayIn</label><br />
+                        </div>
+                        <div class="col-4"></div>
+                        <div class="col-4"><label class="check-out">Ud: @context.FridayOut</label></div>
+                        <div class="col-4" hidden="@(CanManageTimes == false)">
+                            <MatButton OnClick="@(e => ShowEditTime(context.Week, context.FridayDate, context.FridayInID, context.FridayOutID))" class="material-icons">read_more</MatButton>
+                        </div>
+                    </div>
+                </td>
+            </MatTableRow>
+        </MatTable>
+    </div>
+    @if (CanManageTimes)
+    {
+        <div hidden="@hideEditTime" class="col-2" style=@(hideEditTime ? "":"max-width:900px")>
+            <MatCard class="demo-mat-card">
+                <div class="demo-mat-card-content">
+                    <div class="row">
+                        <div class="col-3"></div>
+                        <div class="col">
+                            <MatHeadline6 class="demo-mat-card-clean-margin">
+                                @selectedDate
+                            </MatHeadline6>
+                        </div>
+                        <div class="col-3">
+                            <MatButton Style="color:black;" class="material-icons" OnClick="CloseEditTime">clear</MatButton>
+                        </div>
+                    </div>
+                </div>
+                <MatCardContent>
+                    <div class="row">
+                        @foreach (var item in currentCheckTimes)
+                        {
+                            <div class="col-3"></div>
+                            <div class="col-6">
+                                <AuthorizeView Roles="Administrator, Instructor">
+                                    <Authorized>
+                                        <input type="time" @bind-value="item.CurrentCheckTime" disabled="@item.checkTimeDisabled" />
+                                        <MatButton Style="color:black;" class="material-icons" OnClick="@(e => item.CurrentCheckTime = new DateTimeOffset())" Disabled="@item.checkTimeDisabled">clear</MatButton>
+                                    </Authorized>
+                                    <NotAuthorized>
+                                        <input type="time" @bind-value="item.CurrentCheckTime" disabled />
+                                    </NotAuthorized>
+                                </AuthorizeView>
+                            </div>
+                            <div class="col-3"></div>
+                        }
+
+                        @*<div class="col-3"></div>
+                        <div class="col-6">
+                            <AuthorizeView Roles="Administrator, Instructor">
+                                <Authorized>
+                                    <input type="time" @bind-value="currentCheckInTime" disabled="@checkInTimeDisabled" />
+                                    <MatButton Style="color:black;" class="material-icons" OnClick="@(e => currentCheckInTime = new DateTimeOffset())" Disabled="checkInTimeDisabled">clear</MatButton>
+                                </Authorized>
+                                <NotAuthorized>
+                                    <input type="time" @bind-value="currentCheckInTime" disabled />
+                                </NotAuthorized>
+                            </AuthorizeView>
+                        </div>
+                        <div class="col-3"></div>
+
+                        <div class="col-3"></div>
+                        <div class="col-6">
+                            <AuthorizeView Roles="Administrator, Instructor">
+                                <Authorized>
+                                    <input type="time" @bind-value="currentCheckOutTime" disabled="@checkOutTimeDisabled" />
+                                    <MatButton Style="color:black;" class="material-icons" OnClick="@(e => currentCheckOutTime = new DateTimeOffset())" Disabled="checkOutTimeDisabled">clear</MatButton>
+                                </Authorized>
+                                <NotAuthorized>
+                                    <input type="time" @bind-value="currentCheckOutTime" disabled />
+                                </NotAuthorized>
+                            </AuthorizeView>
+                        </div><div class="col-3"></div>*@
+
+                        <br />
+                        <br />
+
+                        <div class="col-4"></div>
+                        <div class="col-4">
+                            <AuthorizeView Roles="Administrator, Instructor">
+                                <Authorized>
+                                    <MatButton Raised="true" OnClick="EditCheckTime">Gem</MatButton>
+                                </Authorized>
+                            </AuthorizeView>
+                        </div>
+                        <div class="col-4"></div>
+                    </div>
+                    <AuthorizeView Roles="Administrator, Instructor">
+                        <br />
+                        <MatDivider Padded="true"></MatDivider>
+                        <br />
+                        <MatSelectItem @bind-Value="@selectedScanner" Items="@scannerNames" Label="Vælg Scanner*"></MatSelectItem>
+                        <br />
+                        <input type="datetime-local" @bind-value="newCheckDateTime" />
+                        <br />
+                    </AuthorizeView>
+                </MatCardContent>
+                <MatCardActions>
+                    <MatCardActionButtons>
+                    </MatCardActionButtons>
+
+                    <MatCardActionIcons>
+                        <AuthorizeView Roles="Administrator, Instructor">
+                            <MatButton Disabled="!CanCreateTime" Raised="true" OnClick="CreateCheckTime">Tilføj ny tid</MatButton>
+                        </AuthorizeView>
+                    </MatCardActionIcons>
+                </MatCardActions>
+            </MatCard>
+        </div>
+    }
+</div>

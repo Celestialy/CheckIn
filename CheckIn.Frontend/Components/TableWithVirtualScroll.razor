@@ -1,0 +1,36 @@
+﻿
+@typeparam ItemType
+@namespace CheckIn.Frontend.Components
+@using System.Linq
+@using System.Collections.Generic
+@inherits TableWithVirtualscroll<ItemType>
+
+<div  style="@StyleMapper.AsString()" @ref="Ref" >
+    @if (ScrollViewResult != null || Disabled)
+    {
+        <CascadingValue Value="@this">
+            <table class="@(ClassMapper.AsString() + " mat-virtual-scroll")" style="@StyleMapper.AsString()"   @ref="Ref" @attributes="Attributes" Id="@Id">
+                <thead>
+                    <tr class="mdc-table-header-row ">@MatTableHeader</tr>
+                </thead>
+                <tbody class="mat-virtual-scroll-content" style="@GetContentStyle()" >
+                    @if (Items != null)
+                    {
+                        @foreach (var item in Items)
+                        {
+                            <ScrollTableRow @key="item"
+                                            AllowSelection="@AllowSelection"
+                                            RowItem="item"
+                                            extraclass=""
+                                            extraStyle="">
+                                @MatTableRow(item)
+                            </ScrollTableRow>
+                        }
+                    }
+                </tbody>
+            </table>
+        </CascadingValue>
+
+        
+    }
+</div>

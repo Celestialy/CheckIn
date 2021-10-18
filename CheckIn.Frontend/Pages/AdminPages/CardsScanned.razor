@@ -1,0 +1,67 @@
+﻿@page "/cardOverview"
+@using Microsoft.AspNetCore.Authorization
+@using CheckIn.Shared.Models
+@attribute [Authorize(Roles = "Instructor,Administrator")]
+
+@if (Users == null)
+{
+    <div class="mat-blazor-demo-theme-app-row">
+        <MatProgressBar Indeterminate="true"></MatProgressBar>
+    </div>
+}
+else
+{
+
+    <MatSlideToggle Class="testColor" TValue="bool" ValueChanged="(e => filterForUnkownCards(e))" Label="&nbsp;&nbsp;Kun ukendte"></MatSlideToggle>
+    <MatButton Raised OnClick="DeleteChecktime" Disabled="!canOpenModal" Style="float: right">Slet tid</MatButton>
+    <br />
+
+    <TableWithVirtualScroll Items="@FilteretCards" ItemType="CardScanned" Style="height: 500px;" AllowSelection="true" SelectionChanged="SelectionChangedEvent">
+        <MatTableHeader>
+            <th>Kort</th>
+            <th>Scanner</th>
+            <th>Tid</th>
+            <th>Info</th>
+            <th>Bruger</th>
+        </MatTableHeader>
+        <MatTableRow Context="item">
+            <td>@item.card</td>
+            <td>@item.scanner.Name</td>
+            <td>@item.Time.ToLocalTime().ToString("HH:mm:ss")</td>
+            <td>@item.CheckInMessage</td>
+            <td>@item.Username</td>
+        </MatTableRow>
+    </TableWithVirtualScroll>
+
+    <MatDialog @bind-IsOpen="@Openmordal">
+        <MatDialogTitle>Vælg bruger</MatDialogTitle>
+        <MatDialogContent>
+
+            <MatTextField TValue="string" OnInput="OnInput" Label="Søg..." @onkeydown="Search"></MatTextField>
+            <MatTable Items="@Users" ShowPaging="false" SelectionChanged="UserSelected" AllowSelection="true">
+                <MatTableHeader>
+                    <th style="width:50%">Fornavn</th>
+                    <th style="width:28%">Efternavn</th>
+                    <th style="width:22%">Kort</th>
+                </MatTableHeader>
+                <MatTableRow>
+                    <td>@context.FirstName</td>
+                    <td>@context.LastName</td>
+                    <td>@context.CardId</td>
+                </MatTableRow>
+            </MatTable>
+
+            <CheckinPagination Disabled="isLoading" Length="pagination.totalCount" PageSize="pagination.pageSize" Page="OnPage"></CheckinPagination>
+        </MatDialogContent>
+        <MatDialogActions>
+            <MatButton OnClick="@(e => { Openmordal = false; })">Annuller</MatButton>
+            <MatButton Disabled="!canLinkUser" OnClick="LinkCardToUser">OK</MatButton>
+        </MatDialogActions>
+    </MatDialog>
+    @if (canOpenModal)
+    {
+        <MatFAB Style="background-color: #448AFF; float:right;" Icon="@MatIconNames.Edit" OnClick="( e => { Openmordal = true; })"></MatFAB>
+    }
+
+}
+

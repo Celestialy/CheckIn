@@ -1,0 +1,36 @@
+﻿@page "/roomoverview"
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@attribute [Authorize]
+<div class="mat-blazor-demo-theme-app-row">
+    <MatProgressBar Indeterminate="true" Closed="@progressBarDisabled"></MatProgressBar>
+</div>
+
+<div class="row">
+    @foreach (var room in Rooms)
+    {
+        <div class="col" style="flex-grow: 0">
+            <MatCard class="demo-mat-card">
+                <MatCardContent>
+                    <MatButton OnClick="@(e => NavigateRoomUserOverview(room.item.ID))" Raised="true" Style="margin-bottom:20px; height:75px; font-size:x-large;">@room.item.Department: @room.item.RoomName</MatButton>
+                </MatCardContent>
+                <MatCardActions>
+                    <MatCardActionButtons>
+                        <MatButton class="material-icons" Style="color:black;" OnClick="@(e => OnClick(room.MenuButtonRef, room.MenuRef))" @ref="@room.MenuButtonRef">person</MatButton>&nbsp;@room.item.StudentCount
+                        <MatMenu @ref="@room.MenuRef">
+                            <MatList Style="max-width:375px">
+                                @foreach (var student in room.item.Students)
+                                {
+                                    <MatListItem OnClick="(e =>  NavigateUserAnnualOverview(student.CardId))">@student.Name</MatListItem>}
+                            </MatList>
+                        </MatMenu>
+                    </MatCardActionButtons>
+                    <MatCardActionIcons>
+                    </MatCardActionIcons>
+                </MatCardActions>
+            </MatCard>
+        </div>}
+</div>
+<AuthorizeView Roles="Instructor,Administrator">
+    <MatFAB Style="background-color: #448AFF; float:right;" Icon="@MatIconNames.Edit" OnClick="CreateRoom"></MatFAB>
+</AuthorizeView>

@@ -1,0 +1,38 @@
+﻿@page "/{Card?}"
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize]
+
+@if (IsOtherUser)
+{
+    <MatH3>Bruger: @User.Name</MatH3>
+}
+
+<div class="row">
+    <div class="col">
+        <MatTable Items="@TimePoints" class="mat-elevation-z5 check-in-overview daily" ShowPaging="false" PageSize="100">
+            <MatTableHeader>
+                <th>Mandag</th>
+                <th>Tirsdag</th>
+                <th>Onsdag</th>
+                <th>Torsdag</th>
+                <th>Fredag</th>
+            </MatTableHeader>
+            <MatTableRow>
+                @for (int i = 1; i <= 5; i++)
+                {
+                    <td>
+                        <div class="row">
+                            <div class="col-12">
+                                <label class="@(context[(DayOfWeek)i].IsCheckedIn ? "check-in":"check-out")">@context[(DayOfWeek)i].Time</label>
+                                <br />
+                            </div>
+                            <div class="col-12">
+                                <label class="@(context[(DayOfWeek)i].IsCheckedIn ? "check-in":"check-out")">@(context[(DayOfWeek)i].Time != ""  && context[(DayOfWeek)i].TimeDiff == "" ? TimeDiff : context[(DayOfWeek)i].TimeDiff == "total" ? TotalTime : context[(DayOfWeek)i].TimeDiff)</label>
+                            </div>
+                        </div>
+                    </td>
+                }
+            </MatTableRow>
+        </MatTable>
+    </div>
+</div>

@@ -1,0 +1,20 @@
+﻿@namespace CheckIn.Frontend.Components
+@typeparam ItemType
+@inherits TestTableRow<ItemType>
+
+
+@using Microsoft.AspNetCore.Components
+
+<CascadingValue Value="@this">
+    <tr class="@(ClassMapper.AsString() + " " + extraclass)" style="@(StyleMapper.AsString() + " " + extraStyle)" @ref="Ref" @onclick="args => OnClickHandler(args)" @attributes="Attributes" Id="@Id">
+        @ChildContent
+    </tr>
+</CascadingValue>
+
+@code{
+    [Parameter]
+    public string extraclass { get; set; }
+
+    [Parameter]
+    public string extraStyle { get; set; }
+}

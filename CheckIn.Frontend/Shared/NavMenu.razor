@@ -1,0 +1,89 @@
+﻿@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+
+@inject NavigationManager Navigation
+@inject SignOutSessionStateManager SignOutManager
+
+<div class="top-row pl-4 navbar navbar-dark">
+    <p class="navbar-brand">Navigation</p>
+    <button class="navbar-toggler" @onclick="ToggleNavMenu">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+</div>
+
+<div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
+    <ul class="nav flex-column">
+        <li class="nav-item px-3">
+            <AuthorizeView>
+                <Authorized>
+                    <NavLink class="nav-link">
+                        <span class="material-icons">account_circle</span>&nbsp;<div class="navbar-username">@context.User.Identity.Name</div>
+                    </NavLink>
+                </Authorized>
+            </AuthorizeView>
+        </li>
+
+        <MatDivider Padded="true"></MatDivider>
+
+        <li class="nav-item px-3">
+            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                <span class="material-icons" aria-hidden="true">today</span>&nbsp;Dagsoversigt
+            </NavLink>
+        </li>
+        <li class="nav-item px-3">
+            <NavLink class="nav-link" href="annualOverview">
+                <span class="material-icons" aria-hidden="true">wysiwyg</span>&nbsp;Årsoversigt
+            </NavLink>
+        </li>
+        <li class="nav-item px-3">
+            <NavLink class="nav-link" href="roomOverview">
+                <span class="material-icons" aria-hidden="true">groups</span>&nbsp;Lokaleoversigt
+            </NavLink>
+        </li>
+
+        <MatDivider Padded="true"></MatDivider>
+
+        <AuthorizeView Roles="Administrator, Instructor">
+            <li class="nav-item px-3">
+                <NavLink class="nav-link" href="scannerManagement">
+                    <span class="material-icons" aria-hidden="true">scanner</span>&nbsp;Scannere
+                </NavLink>
+            </li>
+
+            <li class="nav-item px-3">
+                <NavLink class="nav-link" href="cardOverview">
+                    <span class="material-icons" aria-hidden="true">payments</span>&nbsp;Kortoversigt
+                </NavLink>
+            </li>
+        </AuthorizeView>
+
+        <MatDivider Padded="true"></MatDivider>
+
+        <AuthorizeView>
+            <Authorized>
+                <li class="nav-item px-3">
+                    <NavLink class="nav-link" @onclick="BeginSignOut">
+                        <span class="material-icons" aria-hidden="true">sensor_door</span>&nbsp;Log ud
+                    </NavLink>
+                </li>
+            </Authorized>
+        </AuthorizeView>
+    </ul>
+</div>
+
+@code {
+    private bool collapseNavMenu = true;
+
+    private string NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+
+    private void ToggleNavMenu()
+    {
+        collapseNavMenu = !collapseNavMenu;
+    }
+
+    private async Task BeginSignOut(MouseEventArgs args)
+    {
+        await SignOutManager.SetSignOutState();
+        Navigation.NavigateTo("authentication/logout");
+    }
+}

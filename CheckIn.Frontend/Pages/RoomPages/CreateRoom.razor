@@ -1,0 +1,66 @@
+﻿@page "/roomoverview/create"
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize(Roles = "Instructor,Administrator")]
+
+@if (Scanners == null || Rooms == null )
+{
+    <div class="mat-blazor-demo-theme-app-row">
+        <MatProgressBar Indeterminate="true"></MatProgressBar>
+    </div>
+}
+else
+{
+    <div class="container">
+        <div class="row">
+            <div class="col-6">
+                <MatCard class="demo-mat-card">
+                    <div class="demo-mat-card-content">
+                        <MatHeadline6 class="demo-mat-card-clean-margin">
+                            Opret Lokale
+                        </MatHeadline6>
+                        <MatDivider></MatDivider>
+                    </div>
+                    <MatCardContent>
+                        <p>
+                            <MatTextField @bind-Value="@Room.RoomName" Label="Lokale navn*" FullWidth="true"></MatTextField>
+                        </p>
+                        <MatSelectItem @bind-Value="@Room.Scanner" Items="@Scanners" Label="Vælg Scanner*" class="card-dropdown">
+                            <ItemTemplate>
+                                @context.Name
+                            </ItemTemplate>
+                        </MatSelectItem>
+                        <MatSelectItem @bind-Value="@Room.Department" Items="@Departments" Label="Vælg Afdeling*"></MatSelectItem>
+                    </MatCardContent>
+                    <MatCardActions>
+                        <MatCardActionIcons>
+                            <MatButton Disabled="!readyToCreate" Raised="true" OnClick="(() => createRoom())">Opret lokale</MatButton>
+                        </MatCardActionIcons>
+                    </MatCardActions>
+                </MatCard>
+            </div>
+
+            <div class="col-6">
+                <MatCard class="demo-mat-card">
+                    <div class="demo-mat-card-content">
+                        <MatHeadline6 class="demo-mat-card-clean-margin">
+                            Fjern Lokale
+                        </MatHeadline6>
+                        <MatDivider></MatDivider>
+                    </div>
+                    <MatCardContent>
+                        <MatSelectItem @bind-Value="@SelectedRoomToRemove" Items="@Rooms" Label="Vælg Lokale*">
+                            <ItemTemplate>
+                                @context.RoomName
+                            </ItemTemplate>
+                        </MatSelectItem>
+                    </MatCardContent>
+                    <MatCardActions>
+                        <MatCardActionIcons>
+                            <MatButton Raised="true" Disabled="(SelectedRoomToRemove == null)" OnClick="(() => removeRoom())">Fjern lokale</MatButton>
+                        </MatCardActionIcons>
+                    </MatCardActions>
+                </MatCard>
+            </div>
+        </div>
+    </div>
+                }

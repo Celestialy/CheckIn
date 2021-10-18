@@ -1,0 +1,64 @@
+﻿@page "/scannerManagement"
+@using CheckIn.Shared.Models; 
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize(Roles = "Instructor,Administrator")]
+
+<div class="row">
+    <div class="col">
+        <MatTable Items="@scannersList" class="mat-elevation-z5" ShowPaging="true" PageSize="10" Style="overflow:hidden">
+            <MatTableHeader>
+                <th style="min-width:400px">Scanner Navn</th>
+                <th>Mac Adresse</th>
+                <th></th>
+            </MatTableHeader>
+            <MatTableRow>
+                <td>@context.Name</td>
+                <td>@context.MacAddress</td>
+                <td>
+                    <MatFAB Style="background-color: #448AFF; margin-right:25px" Icon="@MatIconNames.Edit" OnClick="@(e => { selectedScanner = context; newScannerName = context.Name; editScannerDialog = true; })"></MatFAB>
+                    <MatFAB Style="background-color: #750000;" Icon="@MatIconNames.Delete" OnClick="@(e => { selectedScanner = context; deleteScannerDialog = true; })"></MatFAB>
+                </td>
+            </MatTableRow>
+        </MatTable>
+    </div>
+</div>
+
+<MatFAB Style="background-color: #448AFF; float:right;" Icon="@MatIconNames.Add" OnClick="@(e => { createScannerDialog = true; })"></MatFAB>
+
+<MatDialog @bind-IsOpen="@createScannerDialog">
+    <MatDialogTitle>Opret scanner</MatDialogTitle>
+    <MatDialogContent>
+        <p>Navn</p>
+        <MatTextField Style="margin-bottom:25px" @bind-Value="@newScannerName" PlaceHolder="Navn"></MatTextField>
+
+        <p>Mac Adresse</p>
+        <MatTextField @bind-Value="@newScannerMacAddress" PlaceHolder="Mac Adresse"></MatTextField>
+    </MatDialogContent>
+    <MatDialogActions>
+        <MatButton OnClick="@(e => { createScannerDialog = false; newScannerName = ""; newScannerMacAddress = "";  })">Annuller</MatButton>
+        <MatButton OnClick="@CreateScanner">Opret</MatButton>
+    </MatDialogActions>
+</MatDialog>
+
+<MatDialog @bind-IsOpen="@editScannerDialog">
+    <MatDialogTitle>Rediger scanner</MatDialogTitle>
+    <MatDialogContent>
+        <p>Scanner navn</p>
+        <MatTextField @bind-Value="@newScannerName" PlaceHolder="Scanner navn"></MatTextField>
+    </MatDialogContent>
+    <MatDialogActions>
+        <MatButton OnClick="@(e => { editScannerDialog = false; selectedScanner = new CheckIn.Shared.Models.Scanner(); newScannerName = ""; })">Annuller</MatButton>
+        <MatButton OnClick="@EditScanner">Gem</MatButton>
+    </MatDialogActions>
+</MatDialog>
+
+<MatDialog @bind-IsOpen="@deleteScannerDialog">
+    <MatDialogTitle>Slet scanner</MatDialogTitle>
+    <MatDialogContent>
+        <p>Er du sikker på at du vil slette scanneren ved navn: @selectedScanner.Name</p>
+    </MatDialogContent>
+    <MatDialogActions>
+        <MatButton OnClick="@(e => { deleteScannerDialog = false; selectedScanner = new Scanner(); })">Annuller</MatButton>
+        <MatButton OnClick="@DeleteScanner">Slet</MatButton>
+    </MatDialogActions>
+</MatDialog>
